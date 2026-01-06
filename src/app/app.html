@@ -1,18 +1,42 @@
 <div class="page">
   <header class="nav">
     <div class="nav__inner">
-      <a class="logo" routerLink="/" aria-label="Home">
+      <!-- Logo -->
+      <a class="logo" routerLink="/" (click)="closeMenu()">
         <span class="logo__mark"></span>
         <span class="logo__text">{{ brand }}</span>
       </a>
 
+      <!-- Desktop nav -->
       <nav class="nav__links" aria-label="Primary">
         <a routerLink="/packages">Packages</a>
         <a routerLink="/how-it-works">How it works</a>
         <a routerLink="/gallery">Gallery</a>
+        <a routerLink="/" fragment="book">Book</a>
       </nav>
 
-      <a class="btn btn--primary" routerLink="/" fragment="book">Book now</a>
+      <!-- Desktop CTA -->
+      <a class="btn btn--primary nav__cta" routerLink="/" fragment="book"> Book now </a>
+
+      <!-- Mobile hamburger -->
+      <button
+        class="hamburger"
+        aria-label="Toggle navigation"
+        [attr.aria-expanded]="mobileMenuOpen"
+        (click)="toggleMenu()"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="mobile-menu" [class.mobile-menu--open]="mobileMenuOpen">
+      <a routerLink="/packages" (click)="closeMenu()">Packages</a>
+      <a routerLink="/how-it-works" (click)="closeMenu()">How it works</a>
+      <a routerLink="/gallery" (click)="closeMenu()">Gallery</a>
+      <a routerLink="/" fragment="book" (click)="closeMenu()" class="mobile-cta"> Book now </a>
     </div>
   </header>
 
