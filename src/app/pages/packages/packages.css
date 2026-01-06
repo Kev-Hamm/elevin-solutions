@@ -1,0 +1,127 @@
+/* Reuse the same palette + primitives as AppComponent */
+:host {
+  display: block;
+}
+
+.section {
+  padding: 72px 20px;
+}
+
+.section__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section__head {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.section__head h1 {
+  margin: 0;
+  font-size: clamp(28px, 3.2vw, 40px);
+  letter-spacing: -0.02em;
+}
+
+.muted {
+  opacity: 0.78;
+}
+
+.grid {
+  display: grid;
+  gap: 14px;
+}
+
+.cards {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+@media (min-width: 860px) {
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.card {
+  border-radius: 20px;
+  border: 1px solid rgba(63, 74, 60, 0.14);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 18px;
+  box-shadow: 0 10px 26px rgba(63, 74, 60, 0.1);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(63, 74, 60, 0.14);
+}
+
+.card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(78, 124, 120, 0.18);
+  border: 1px solid rgba(78, 124, 120, 0.24);
+}
+
+.card__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(232, 215, 195, 0.7);
+  border: 1px solid rgba(63, 74, 60, 0.14);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.card h3 {
+  margin: 12px 0 6px;
+  letter-spacing: -0.02em;
+}
+
+.card__footer {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.price {
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+/* Buttons (minimal subset) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(63, 74, 60, 0.16);
+  background: #fff7ee;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: #4e7c78;
+  color: #fff7ee;
+  border-color: rgba(78, 124, 120, 0.35);
+}
+
+.btn--small {
+  padding: 9px 12px;
+  font-size: 0.95rem;
+}
