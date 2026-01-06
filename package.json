@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "ng deploy --base-href=/REPO_NAME/"
+    "deploy": "ng deploy --base-href=/gh-pages-app/"
   },
   "prettier": {
     "printWidth": 100,
