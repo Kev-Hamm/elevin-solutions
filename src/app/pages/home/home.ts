@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -24,7 +24,19 @@ type Faq = {
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
+  private timerId: ReturnType<typeof setInterval> | null = null;
+  protected readonly rotationMs = 3500;
+
+  readonly carouselImages = [
+    { src: 'assets/images/charcuterie-board-1.jpg', position: '25% 25%' },
+    { src: 'assets/images/charcuterie-board-2.jpg', position: '50% 50%' },
+    { src: 'assets/images/charcuterie-board-3.jpg', position: '50% 50%' },
+    { src: 'assets/images/charcuterie-board-4.jpg', position: '80% 50%' },
+  ];
+
+  activeIndex = 0;
+
   readonly brand = 'Picnic & Co.';
   readonly tagline =
     'Curated luxury picnic experiences, beautifully styled and effortlessly hosted.';
@@ -68,4 +80,39 @@ export class HomeComponent {
   readonly featureTitle = 'Curated, turnkey setups';
   readonly featureCopy =
     'We scout locations, style the scene, and handle the clean-up so you simply arrive and enjoy.';
+
+  ngOnInit(): void {
+    if (this.carouselImages.length > 1) {
+      this.startRotation();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.stopRotation();
+  }
+
+  setActive(index: number): void {
+    this.activeIndex = index;
+    this.restartRotation();
+  }
+
+  private startRotation() {
+    this.stopRotation();
+    this.timerId = setInterval(() => {
+      this.activeIndex = (this.activeIndex + 1) % this.carouselImages.length;
+    }, this.rotationMs);
+  }
+
+  private stopRotation() {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+      this.timerId = null;
+    }
+  }
+
+  private restartRotation() {
+    if (this.carouselImages.length > 1) {
+      this.startRotation();
+    }
+  }
 }

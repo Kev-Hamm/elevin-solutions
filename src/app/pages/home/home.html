@@ -21,7 +21,29 @@
   </div>
 
   <div class="hero__card" aria-hidden="true">
-    <div class="card__image"></div>
+    <div class="carousel">
+      <div class="carousel__track">
+        <img
+          *ngFor="let img of carouselImages; let i = index"
+          class="carousel__img"
+          [class.carousel__img--active]="i === activeIndex"
+          [src]="img.src"
+          [alt]="'Charcuterie board ' + (i + 1)"
+          [style.object-position]="img.position"
+          loading="lazy"
+        />
+      </div>
+      <div class="carousel__dots">
+        <button
+          type="button"
+          *ngFor="let img of carouselImages; let i = index"
+          class="dot"
+          [class.dot--active]="i === activeIndex"
+          (click)="setActive(i)"
+          [attr.aria-label]="'View image ' + (i + 1)"
+        ></button>
+      </div>
+    </div>
     <div class="card__note">
       <div class="note__title">{{ featureTitle }}</div>
       <div class="note__text">{{ featureCopy }}</div>
