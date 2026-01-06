@@ -1,0 +1,46 @@
+<div class="page">
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="logo" routerLink="/" aria-label="Home">
+        <span class="logo__mark"></span>
+        <span class="logo__text">{{ brand }}</span>
+      </a>
+
+      <nav class="nav__links" aria-label="Primary">
+        <a routerLink="/packages">Packages</a>
+        <a routerLink="/how-it-works">How it works</a>
+        <a routerLink="/gallery">Gallery</a>
+      </nav>
+
+      <a class="btn btn--primary" routerLink="/" fragment="book">Book now</a>
+    </div>
+  </header>
+
+  <main class="page__body">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <div class="logo logo--footer">
+          <span class="logo__mark"></span>
+          <span class="logo__text">{{ brand }}</span>
+        </div>
+        <p class="muted">Curated picnic experiences with warm, modern styling.</p>
+      </div>
+
+      <div class="footer__links">
+        <a routerLink="/packages">Packages</a>
+        <a routerLink="/how-it-works">How it works</a>
+        <a routerLink="/gallery">Gallery</a>
+        <a routerLink="/" fragment="book">Book</a>
+      </div>
+
+      <div class="footer__meta">
+        <!-- <p class="muted">© {{ brand }} {{ new Date().getFullYear() }}</p> -->
+        <p class="muted">hello@yourpicniccompany.com</p>
+      </div>
+    </div>
+  </footer>
+</div>

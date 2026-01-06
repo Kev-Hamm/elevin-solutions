@@ -1,0 +1,95 @@
+<section class="hero">
+  <div class="wrap">
+    <div class="hero__copy">
+      <p class="pill">Simple • Styled • Stress-free</p>
+      <h1>{{ pageTitle }}</h1>
+      <p class="subhead">{{ intro }}</p>
+
+      <div class="hero__actions">
+        <a class="btn btn--primary" routerLink="/" fragment="book">Request availability</a>
+        <a class="btn btn--ghost" routerLink="/packages">View packages</a>
+      </div>
+    </div>
+
+    <div class="hero__visual" aria-hidden="true">
+      <div class="visual-card">
+        <div class="visual-card__top">
+          <span class="dot"></span>
+          <span class="visual-card__label">Your experience, elevated</span>
+        </div>
+        <div class="visual-card__image">
+          <div class="img-placeholder">
+            <div class="img-placeholder__title">How It Works Visual</div>
+            <div class="img-placeholder__subtitle">Styled setup photo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section__head">
+      <h2>The process</h2>
+      <p class="muted">
+        Inspired by common luxury picnic booking flows: we set up before you arrive and return after
+        to pack up.
+      </p>
+    </div>
+
+    <div class="steps">
+      <article class="step" *ngFor="let s of steps; let i = index">
+        <div class="step__num">{{ i + 1 }}</div>
+        <div class="step__content">
+          <h3>{{ s.title }}</h3>
+          <p class="muted">{{ s.body }}</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+    <div class="section__head">
+      <h2>Booking details</h2>
+      <p class="muted">
+        Helpful guidance on timelines and what’s included (adapted from Luxe Brunches’ FAQ content).
+      </p>
+    </div>
+
+    <div class="cards">
+      <article class="card" *ngFor="let b of bookingNotes">
+        <h3>{{ b.title }}</h3>
+        <p class="muted">{{ b.body }}</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section__head">
+      <h2>Policies</h2>
+      <p class="muted">
+        Clear expectations for rescheduling, cancellations, and weather so you can book confidently.
+      </p>
+    </div>
+
+    <div class="cards cards--3">
+      <article class="card" *ngFor="let p of policies">
+        <h3>{{ p.title }}</h3>
+        <p class="muted">{{ p.body }}</p>
+      </article>
+    </div>
+
+    <div class="cta">
+      <div>
+        <h3>{{ ctaTitle }}</h3>
+        <p class="muted">{{ ctaBody }}</p>
+      </div>
+      <a class="btn btn--primary" routerLink="/" fragment="book">Book now</a>
+    </div>
+  </div>
+</section>

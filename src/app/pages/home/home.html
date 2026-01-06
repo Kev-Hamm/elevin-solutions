@@ -1,0 +1,30 @@
+<section class="hero">
+  <div class="hero__content">
+    <p class="eyebrow">Luxe Brunches</p>
+    <h1>Luxury picnics, styled for your standout moments.</h1>
+    <p class="lede">
+      From surprise proposals to intimate birthdays, we design atmospheric outdoor gatherings with layered
+      textures, elevated tablescapes, and concierge-level service.
+    </p>
+
+    <div class="hero__actions">
+      <a class="btn btn--primary" routerLink="/packages">View packages</a>
+      <a class="btn btn--ghost" href="#book">Book a date</a>
+    </div>
+
+    <div class="hero__highlights">
+      <div class="highlight" *ngFor="let item of highlights">
+        <div class="highlight__value">{{ item.value }}</div>
+        <div class="highlight__label">{{ item.label }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__card" aria-hidden="true">
+    <div class="card__image"></div>
+    <div class="card__note">
+      <div class="note__title">{{ featureTitle }}</div>
+      <div class="note__text">{{ featureCopy }}</div>
+    </div>
+  </div>
+</section>
