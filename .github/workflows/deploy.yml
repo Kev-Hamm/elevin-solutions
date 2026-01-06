@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build -- --base-href /luxe-brunches/
+        run: npm run build -- --base-href /gh-pages-app/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
