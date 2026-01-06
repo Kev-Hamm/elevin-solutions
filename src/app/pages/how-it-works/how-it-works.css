@@ -298,3 +298,22 @@ h1 {
 .cta p {
   margin: 6px 0 0;
 }
+
+@media (max-width: 480px) {
+  .btn {
+    padding: 14px 18px;
+  }
+}
+
+@media (max-width: 720px) {
+  .nav__links {
+    display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .step {
+    padding: 14px;
+    gap: 10px;
+  }
+}

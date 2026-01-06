@@ -309,3 +309,19 @@ h1 {
 .cta p {
   margin: 6px 0 0;
 }
+
+.toolbar {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 6px;
+}
+.toolbar::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tile:nth-child(3n) .img-placeholder {
+  min-height: 320px;
+}
+.tile:nth-child(4n) .img-placeholder {
+  min-height: 280px;
+}

@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: false
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build -- --base-href /gh-pages-app/
+        run: npm run build -- --base-href /luxe-brunches-app/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
