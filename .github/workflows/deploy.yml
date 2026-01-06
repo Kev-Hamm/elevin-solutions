@@ -24,17 +24,17 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: npm
-
-      - name: Use npm 11 (matches package-lock)
-        run: npm install -g npm@11.7.0
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build
         run: npm run build -- --base-href /luxe-brunches-app/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
