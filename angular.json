@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "gh-pages-app": {
+    "luxe-brunches": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -16,7 +16,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/gh-pages-app",
+            "outputPath": "dist/luxe-brunches",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
@@ -25,9 +25,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ]
+            "styles": ["src/styles.css"]
           },
           "configurations": {
             "production": {
@@ -57,10 +55,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "gh-pages-app:build:production"
+              "buildTarget": "luxe-brunches:build:production"
             },
             "development": {
-              "buildTarget": "gh-pages-app:build:development"
+              "buildTarget": "luxe-brunches:build:development"
             }
           },
           "defaultConfiguration": "development"
