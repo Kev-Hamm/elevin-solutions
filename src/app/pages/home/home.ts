@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -25,7 +25,7 @@ type Faq = {
   styleUrl: './home.css',
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  private timerId: ReturnType<typeof setInterval> | null = null;
+  private timerId: number | null = null;
   protected readonly rotationMs = 3500;
 
   readonly carouselImages = [
@@ -81,6 +81,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   readonly featureCopy =
     'We scout locations, style the scene, and handle the clean-up so you simply arrive and enjoy.';
 
+  constructor(private readonly cdr: ChangeDetectorRef) {}
+
   ngOnInit(): void {
     if (this.carouselImages.length > 1) {
       this.startRotation();
@@ -98,8 +100,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private startRotation() {
     this.stopRotation();
-    this.timerId = setInterval(() => {
+    this.timerId = window.setInterval(() => {
       this.activeIndex = (this.activeIndex + 1) % this.carouselImages.length;
+      this.cdr.markForCheck();
     }, this.rotationMs);
   }
 
