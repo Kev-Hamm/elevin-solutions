@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages
+name: Deploy Angular to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -11,15 +11,24 @@ permissions:
   id-token: write
 
 concurrency:
-  group: 'pages'
-  cancel-in-progress: false
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SITE_DIR: dist-site/browser
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: false
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -27,27 +36,60 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies
+      - name: Install deps
         run: npm ci
 
-      - name: Build
-        run: npm run build -- --base-href /gh-pages-app/
+      - name: Resolve custom domain
+        run: |
+          CUSTOM_DOMAIN_INPUT="${{ vars.PAGES_CUSTOM_DOMAIN || '' }}"
+          if [ -n "$CUSTOM_DOMAIN_INPUT" ]; then
+            CUSTOM_DOMAIN="$CUSTOM_DOMAIN_INPUT"
+            echo "Using custom domain from repo variable: $CUSTOM_DOMAIN"
+          elif [ -f CNAME ]; then
+            CUSTOM_DOMAIN="$(cat CNAME)"
+            echo "Using custom domain from repo CNAME file: $CUSTOM_DOMAIN"
+          else
+            CUSTOM_DOMAIN=""
+            echo "No custom domain detected; will use project path."
+          fi
+          echo "CUSTOM_DOMAIN=$CUSTOM_DOMAIN" >> "$GITHUB_ENV"
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+      - name: Build
+        run: |
+          # Angular emits the browser bundle under <output>/browser for the application builder.
+          if [ -n "$CUSTOM_DOMAIN" ]; then
+            BASE_PATH="/"
+          else
+            BASE_PATH="/${{ github.event.repository.name }}/"
+          fi
+          echo "Using base href: $BASE_PATH"
+          npx ng build --configuration production --base-href "$BASE_PATH" --deploy-url "$BASE_PATH" --output-path dist-site
+
+      - name: Add Pages files
+        run: |
+          touch "$SITE_DIR/.nojekyll"
+          if [ -n "$CUSTOM_DOMAIN" ]; then echo "$CUSTOM_DOMAIN" > "$SITE_DIR/CNAME"; fi
+          cp "$SITE_DIR/index.html" "$SITE_DIR/404.html"
+
+      - name: Debug output
+        run: |
+          echo "=== dist-site contents ==="
+          ls -la dist-site
+          echo "=== site contents ==="
+          ls -la "$SITE_DIR"
+          echo "=== base href in index.html ==="
+          sed -n '1,60p' "$SITE_DIR/index.html" | cat
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/luxe-brunches/browser
+          path: ${{ env.SITE_DIR }}
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4

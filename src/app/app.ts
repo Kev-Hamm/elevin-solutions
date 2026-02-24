@@ -1,24 +1,12 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrls: ['./app.css'],
+  styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('luxe-brunches');
-
-  brand = 'Luxe Brunches';
-  mobileMenuOpen = false;
-
-  toggleMenu() {
-    this.mobileMenuOpen = !this.mobileMenuOpen;
-  }
-
-  closeMenu() {
-    this.mobileMenuOpen = false;
-  }
+  protected readonly title = signal('blue-oasis');
 }

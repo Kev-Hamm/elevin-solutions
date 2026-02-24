@@ -1,0 +1,58 @@
+:host {
+  --ink: #0f2854;
+  --muted: rgba(15, 40, 84, 0.78);
+  --paper: #fbfbfd;
+  --mid-blue: #4988c4;
+
+  display: block;
+  color: var(--ink);
+}
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #ffffff 0%, var(--paper) 100%);
+}
+
+.container {
+  width: min(900px, calc(100% - 2.5rem));
+  margin: 0 auto;
+}
+
+.hero {
+  padding: 3rem 0 1.5rem;
+}
+
+h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+}
+
+.effective-date {
+  margin: 0 0 1rem;
+}
+
+.hero p,
+.policy p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.content {
+  padding: 0.5rem 0 4rem;
+}
+
+.policy h2 {
+  margin: 2rem 0 0.6rem;
+  color: var(--ink);
+  font-size: 1.45rem;
+}
+
+.policy ul {
+  margin: 0.5rem 0 1rem 1.2rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+a {
+  color: var(--mid-blue);
+}

@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "luxe-brunches": {
+    "blue-oasis-blank": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -16,7 +16,6 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/luxe-brunches",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": ["src/assets"],
@@ -50,19 +49,16 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "luxe-brunches:build:production"
+              "buildTarget": "blue-oasis-blank:build:production"
             },
             "development": {
-              "buildTarget": "luxe-brunches:build:development"
+              "buildTarget": "blue-oasis-blank:build:development"
             }
           },
           "defaultConfiguration": "development"
         },
         "test": {
           "builder": "@angular/build:unit-test"
-        },
-        "deploy": {
-          "builder": "angular-cli-luxebrunches:deploy"
         }
       }
     }
