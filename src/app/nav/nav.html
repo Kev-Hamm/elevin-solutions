@@ -1,7 +1,11 @@
 <header class="topbar" role="banner" [class.is-open]="isOpen">
   <div class="topbar__inner">
     <a class="brand" routerLink="/" (click)="closeNav()">
-      <img class="brand__logo" src="/assets/blue-oasis-logo.svg" alt="Elevin Solutions logo" />
+      <img
+        class="brand__logo"
+        src="/assets/elevin_solutions_logo_transparent_2.png"
+        alt="Elevin Solutions logo"
+      />
     </a>
 
     <button class="nav__toggle" type="button" (click)="toggleNav()" [attr.aria-expanded]="isOpen">

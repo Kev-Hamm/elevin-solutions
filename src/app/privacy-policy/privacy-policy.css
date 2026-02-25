@@ -1,8 +1,8 @@
 :host {
-  --ink: #0f2854;
-  --muted: rgba(15, 40, 84, 0.78);
-  --paper: #fbfbfd;
-  --mid-blue: #4988c4;
+  --ink: var(--color-text);
+  --muted: rgba(44, 47, 51, 0.8);
+  --paper: var(--color-neutral);
+  --mid-blue: var(--color-secondary);
 
   display: block;
   color: var(--ink);
@@ -10,7 +10,7 @@
 
 .page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #ffffff 0%, var(--paper) 100%);
+  background: var(--paper);
 }
 
 .container {

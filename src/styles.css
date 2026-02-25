@@ -1,1 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --color-primary: #0f2854; /* Deep Navy */
+  --color-secondary: #2f6f73; /* Muted Teal */
+  --color-neutral: #f4f1eb; /* Warm Ivory */
+  --color-accent: #b7c9b5; /* Sage */
+  --color-text: #2c2f33; /* Charcoal */
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--color-neutral);
+  color: var(--color-text);
+}
