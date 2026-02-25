@@ -12,17 +12,30 @@
     </button>
 
     <nav class="nav" aria-label="Primary" [class.nav--open]="isOpen">
-      <a class="nav__link" routerLink="/about" routerLinkActive="active" (click)="closeNav()">About Us</a>
-      <a class="nav__link" routerLink="/privacy-policy" routerLinkActive="active" (click)="closeNav()">Privacy Policy</a>
-      <a class="nav__link" href="#communities" (click)="closeNav()">Our Communities</a>
+      <a class="nav__link" routerLink="/about" routerLinkActive="active" (click)="closeNav()"
+        >About Us</a
+      >
+      <a
+        class="nav__link"
+        routerLink="/privacy-policy"
+        routerLinkActive="active"
+        (click)="closeNav()"
+        >Privacy Policy</a
+      >
+      <!-- <a class="nav__link" href="#communities" (click)="closeNav()">Our Communities</a> -->
       <a class="nav__link" href="#services" (click)="closeNav()">Services</a>
       <!-- <a class="nav__link" href="#testimonials" (click)="closeNav()">Testimonials</a> -->
       <a class="nav__link" href="#contact" (click)="closeNav()">Contact Us</a>
-      <a class="btn btn--primary nav__cta nav__cta--mobile" href="#get-involved" (click)="closeNav()">Get Involved</a>
+      <a
+        class="btn btn--primary nav__cta nav__cta--mobile"
+        href="#get-involved"
+        (click)="closeNav()"
+        >Get Involved</a
+      >
     </nav>
 
     <!-- <a class="btn btn--primary nav__cta nav__cta--desktop" href="#get-involved" (click)="closeNav()">Get Involved</a> -->
   </div>
 
-  <button class="nav__overlay" *ngIf="isOpen" (click)="closeNav()" aria-hidden="true"></button>
+  <!-- <button class="nav__overlay" *ngIf="isOpen" (click)="closeNav()" aria-hidden="true"></button> -->
 </header>
