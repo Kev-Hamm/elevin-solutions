@@ -6,6 +6,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:gh": "ng build --base-href /DirtyCLAW/",
     "postbuild": "cp dist/elevinsolutions-web/index.html dist/elevinsolutions-web/404.html",
     "test": "ng test",
     "lint": "ng lint",
