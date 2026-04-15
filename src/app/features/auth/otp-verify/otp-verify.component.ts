@@ -47,7 +47,7 @@ import { AuthService } from '../../../core/services/auth.service';
             [disabled]="loading || resendCooldown > 0"
             class="secondary"
           >
-            {{ resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code' }}
+            {{ resendCooldown > 0 ? ('Resend in ' + resendCooldown + 's') : 'Resend Code' }}
           </button>
         </form>
 

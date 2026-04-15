@@ -23,7 +23,7 @@ export interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5000/api';
+  private apiUrl = 'https://api.elevinsolutions.us/api';
   private userSubject = new BehaviorSubject<User | null>(null);
   public user$ = this.userSubject.asObservable();
   private otpRequiredSubject = new BehaviorSubject<boolean>(false);

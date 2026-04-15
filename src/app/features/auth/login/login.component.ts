@@ -12,7 +12,7 @@ import { AuthService } from '../../../core/services/auth.service';
     <div class="login-container">
       <div class="login-card">
         <h1>Elevin Solutions</h1>
-        <p class="subtitle">Housing Management System</p>
+        <p class="subtitle">Residential housing support (non-medical)</p>
 
         <div *ngIf="error" class="alert alert-error">{{ error }}</div>
 

@@ -6,58 +6,29 @@ import { TOTPSetupComponent } from './features/auth/totp-setup/totp-setup.compon
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { ClientListComponent } from './features/clients/client-list/client-list.component';
 import { ClientFormComponent } from './features/clients/client-form/client-form.component';
+import { UnitsListComponent } from './features/units/units-list.component';
+import { CheckInComponent } from './features/occupancy/check-in.component';
 
 export const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full',
-  },
-  {
-    path: 'login',
-    component: LoginComponent,
-  },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
   {
     path: 'auth',
     children: [
-      {
-        path: 'otp-verify',
-        component: OTPVerifyComponent,
-      },
-      {
-        path: 'totp-setup',
-        component: TOTPSetupComponent,
-        canActivate: [authGuard],
-      },
+      { path: 'otp-verify', component: OTPVerifyComponent },
+      { path: 'totp-setup', component: TOTPSetupComponent, canActivate: [authGuard] },
     ],
   },
-  {
-    path: 'dashboard',
-    component: DashboardComponent,
-    canActivate: [authGuard],
-  },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   {
     path: 'clients',
     children: [
-      {
-        path: '',
-        component: ClientListComponent,
-        canActivate: [authGuard],
-      },
-      {
-        path: 'new',
-        component: ClientFormComponent,
-        canActivate: [authGuard],
-      },
-      {
-        path: ':id',
-        component: ClientFormComponent,
-        canActivate: [authGuard],
-      },
+      { path: '', component: ClientListComponent, canActivate: [authGuard] },
+      { path: 'new', component: ClientFormComponent, canActivate: [authGuard] },
+      { path: ':id', component: ClientFormComponent, canActivate: [authGuard] },
     ],
   },
-  {
-    path: '**',
-    redirectTo: 'dashboard',
-  },
+  { path: 'units', component: UnitsListComponent, canActivate: [authGuard] },
+  { path: 'occupancies', component: CheckInComponent, canActivate: [authGuard] },
+  { path: '**', redirectTo: 'dashboard' },
 ];
