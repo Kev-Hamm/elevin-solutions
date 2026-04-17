@@ -14,7 +14,7 @@ import { ApiService } from '../../core/services/api.service';
   `,
   styles: [`
     .health { display: inline-flex; align-items: center; gap: .5rem; padding: .25rem .5rem; border-radius: 999px; background: #f3f4f6; color: #374151; font-size: .9rem; }
-    .health.up { background: #ecfdf5; color: #065f46; }
+    .health.up { background: #e6f4f4; color: #2f6f73; }
     .health.down { background: #fef2f2; color: #991b1b; }
     .dot { width: .6rem; height: .6rem; border-radius: 50%; background: currentColor; display: inline-block; }
   `]
