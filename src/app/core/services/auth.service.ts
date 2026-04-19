@@ -9,6 +9,7 @@ export interface User {
   firstName: string;
   lastName: string;
   role: string;
+  forcePasswordChangeOnFirstLogin?: boolean;
 }
 
 export interface AuthResponse {
@@ -19,6 +20,13 @@ export interface AuthResponse {
   };
 }
 
+export interface LoginResponse {
+  requiresTwoFactor: boolean;
+  challengeToken: string;
+  expiresIn: number;
+  user: User;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -26,16 +34,11 @@ export class AuthService {
   private apiUrl = 'https://api.elevinsolutions.us/api';
   private userSubject = new BehaviorSubject<User | null>(null);
   public user$ = this.userSubject.asObservable();
-  private otpRequiredSubject = new BehaviorSubject<boolean>(false);
-  public otpRequired$ = this.otpRequiredSubject.asObservable();
 
   constructor(private http: HttpClient) {
     this.loadStoredUser();
   }
 
-  /**
-   * Register new user
-   */
   register(
     email: string,
     password: string,
@@ -54,83 +57,70 @@ export class AuthService {
       .pipe(
         tap(response => {
           this.storeTokens(response.tokens);
-          this.userSubject.next(response.user);
+          this.setCurrentUser(response.user);
         })
       );
   }
 
-  /**
-   * Login with email and password
-   */
-  login(email: string, password: string): Observable<any> {
+  login(email: string, password: string): Observable<LoginResponse> {
     return this.http
-      .post<any>(`${this.apiUrl}/auth/login`, { email, password })
+      .post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password })
       .pipe(
         tap(response => {
-          // Check if OTP is required
-          if (response.otpRequired) {
-            this.otpRequiredSubject.next(true);
-            localStorage.setItem('loginUserId', response.userId);
-          } else {
-            this.storeTokens(response.tokens);
-            this.userSubject.next(response.user);
-            this.otpRequiredSubject.next(false);
-          }
+          localStorage.setItem('otpChallengeToken', response.challengeToken);
+          localStorage.setItem('otpExpiresIn', String(response.expiresIn));
+          localStorage.setItem('pendingUser', JSON.stringify(response.user));
         })
       );
   }
 
-  /**
-   * Send OTP for 2FA
-   */
-  sendOTP(userId: string, email: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/otp/send`, { userId, email });
+  verifyOTP(challengeToken: string, otpCode: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/auth/verify-otp`, {
+        challengeToken,
+        otpCode,
+      })
+      .pipe(
+        tap(response => {
+          this.storeTokens(response.tokens);
+          this.setCurrentUser(response.user);
+          localStorage.removeItem('otpChallengeToken');
+          localStorage.removeItem('otpExpiresIn');
+          localStorage.removeItem('pendingUser');
+        })
+      );
   }
 
-  /**
-   * Verify OTP code
-   */
-  verifyOTP(userId: string, code: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/otp/verify`, {
-      userId,
-      code,
-    });
-  }
-
-  /**
-   * Enroll in TOTP (authenticator app)
-   */
   enrollTOTP(): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/totp/enroll`, {});
   }
 
-  /**
-   * Verify TOTP code during enrollment
-   */
   verifyTOTPSetup(code: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/totp/verify`, { code });
   }
 
-  /**
-   * Verify TOTP code during login
-   */
-  verifyTOTPLogin(userId: string, code: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/totp/verify-login`, {
-      userId,
-      code,
-    });
-  }
-
-  /**
-   * Get current user
-   */
   getCurrentUser(): Observable<{ user: User }> {
-    return this.http.get<{ user: User }>(`${this.apiUrl}/auth/me`);
+    return this.http.get<{ user: User }>(`${this.apiUrl}/auth/me`).pipe(
+      tap(response => {
+        this.setCurrentUser(response.user);
+      })
+    );
   }
 
-  /**
-   * Refresh JWT token
-   */
+  changePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.patch<{ message: string }>(`${this.apiUrl}/auth/users/me/password`, {
+      currentPassword,
+      newPassword,
+    }).pipe(
+      tap(() => {
+        const user = this.userSubject.value;
+        if (user?.forcePasswordChangeOnFirstLogin) {
+          this.setCurrentUser({ ...user, forcePasswordChangeOnFirstLogin: false });
+        }
+      })
+    );
+  }
+
   refreshToken(): Observable<AuthResponse> {
     const refreshToken = localStorage.getItem('refreshToken');
     return this.http
@@ -142,56 +132,61 @@ export class AuthService {
       );
   }
 
-  /**
-   * Logout
-   */
   logout(): void {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    localStorage.removeItem('loginUserId');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('otpChallengeToken');
+    localStorage.removeItem('otpExpiresIn');
+    localStorage.removeItem('pendingUser');
     this.userSubject.next(null);
-    this.otpRequiredSubject.next(false);
   }
 
-  /**
-   * Get access token
-   */
   getAccessToken(): string | null {
     return localStorage.getItem('accessToken');
   }
 
-  /**
-   * Check if user is logged in
-   */
   isLoggedIn(): boolean {
     return !!this.getAccessToken();
   }
 
-  /**
-   * Get current user synchronously
-   */
   getCurrentUserSync(): User | null {
     return this.userSubject.value;
   }
 
-  /**
-   * Store tokens
-   */
+  getChallengeToken(): string | null {
+    return localStorage.getItem('otpChallengeToken');
+  }
+
+  getOtpExpiresIn(): number {
+    return Number(localStorage.getItem('otpExpiresIn') || '300');
+  }
+
+  needsPasswordChange(): boolean {
+    return Boolean(this.userSubject.value?.forcePasswordChangeOnFirstLogin);
+  }
+
+  private setCurrentUser(user: User | null): void {
+    this.userSubject.next(user);
+    if (user) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('currentUser');
+    }
+  }
+
   private storeTokens(tokens: { accessToken: string; refreshToken: string }): void {
     localStorage.setItem('accessToken', tokens.accessToken);
     localStorage.setItem('refreshToken', tokens.refreshToken);
   }
 
-  /**
-   * Load stored user from localStorage (after page reload)
-   */
   private loadStoredUser(): void {
     const stored = localStorage.getItem('currentUser');
     if (stored) {
       try {
         this.userSubject.next(JSON.parse(stored));
-      } catch (e) {
-        console.error('Failed to load stored user', e);
+      } catch {
+        localStorage.removeItem('currentUser');
       }
     }
   }

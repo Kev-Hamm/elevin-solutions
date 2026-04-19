@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-export const authGuard: CanActivateFn = (_route, state) => {
+export const adminGuard: CanActivateFn = (_route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -16,5 +16,11 @@ export const authGuard: CanActivateFn = (_route, state) => {
     return false;
   }
 
-  return true;
+  const currentUser = authService.getCurrentUserSync();
+  if (currentUser?.role === 'admin') {
+    return true;
+  }
+
+  router.navigate(['/dashboard']);
+  return false;
 };

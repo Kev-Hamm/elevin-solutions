@@ -6,8 +6,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:elevin": "ng build --base-href /elevin/ --output-path dist/elevin --output-hashing=all && cp dist/elevin/index.html dist/elevin/404.html",
     "build:gh": "ng build --base-href /DirtyCLAW/",
     "postbuild": "cp dist/elevinsolutions-web/index.html dist/elevinsolutions-web/404.html",
+    "deploy:elevin": "bash ./scripts/deploy-elevin.sh",
     "test": "ng test",
     "lint": "ng lint",
     "dev": "ng serve --open"

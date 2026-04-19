@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 import { LoginComponent } from './features/auth/login/login.component';
 import { OTPVerifyComponent } from './features/auth/otp-verify/otp-verify.component';
 import { TOTPSetupComponent } from './features/auth/totp-setup/totp-setup.component';
@@ -8,6 +9,8 @@ import { ClientListComponent } from './features/clients/client-list/client-list.
 import { ClientFormComponent } from './features/clients/client-form/client-form.component';
 import { UnitsListComponent } from './features/units/units-list.component';
 import { CheckInComponent } from './features/occupancy/check-in.component';
+import { SettingsComponent } from './features/settings/settings.component';
+import { UserManagementComponent } from './features/users/user-management.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -30,5 +33,7 @@ export const routes: Routes = [
   },
   { path: 'units', component: UnitsListComponent, canActivate: [authGuard] },
   { path: 'occupancies', component: CheckInComponent, canActivate: [authGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
+  { path: 'users', component: UserManagementComponent, canActivate: [adminGuard] },
   { path: '**', redirectTo: 'dashboard' },
 ];
