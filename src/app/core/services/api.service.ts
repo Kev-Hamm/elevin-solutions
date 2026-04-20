@@ -25,6 +25,16 @@ export interface OccupancyRequest {
   startDate: string; // ISO date
 }
 
+export interface IntakeSubmissionRequest {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  phone: string;
+  email: string;
+  ssn?: string;
+  ageAttested: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private apiUrl = 'https://api.elevinsolutions.us/api';
@@ -53,5 +63,10 @@ export class ApiService {
   // Occupancies
   createOccupancy(payload: OccupancyRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/occupancies`, payload);
+  }
+
+  // Public intake
+  submitIntake(payload: IntakeSubmissionRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/intake`, payload);
   }
 }

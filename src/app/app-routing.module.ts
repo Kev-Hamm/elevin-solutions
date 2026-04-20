@@ -13,9 +13,13 @@ import { SettingsComponent } from './features/settings/settings.component';
 import { UserManagementComponent } from './features/users/user-management.component';
 import { AdminIntakeListComponent } from './features/intake/admin-intake-list.component';
 import { AdminIntakeDetailComponent } from './features/intake/admin-intake-detail.component';
+import { IntakeFormComponent } from './features/intake/intake-form.component';
+import { IntakeConfirmationComponent } from './features/intake/intake-confirmation.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: 'intake', component: IntakeFormComponent },
+  { path: 'intake/confirmation', component: IntakeConfirmationComponent },
   { path: 'login', component: LoginComponent },
   {
     path: 'auth',
