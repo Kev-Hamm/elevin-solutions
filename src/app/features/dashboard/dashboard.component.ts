@@ -53,6 +53,12 @@ import { HealthIndicatorComponent } from '../health/health-indicator.component';
             <a routerLink="/occupancies" class="btn">Start Check-In</a>
           </div>
 
+          <div class="link-card">
+            <h3>📝 Intake submissions</h3>
+            <p>Review masked intake records and open submission details</p>
+            <a routerLink="/intake-submissions" class="btn">View Intake Queue</a>
+          </div>
+
           <div class="link-card" *ngIf="currentUser?.role === 'admin'">
             <h3>👤 Users</h3>
             <p>Invite staff and track pending account setup</p>

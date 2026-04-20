@@ -11,6 +11,8 @@ import { UnitsListComponent } from './features/units/units-list.component';
 import { CheckInComponent } from './features/occupancy/check-in.component';
 import { SettingsComponent } from './features/settings/settings.component';
 import { UserManagementComponent } from './features/users/user-management.component';
+import { AdminIntakeListComponent } from './features/intake/admin-intake-list.component';
+import { AdminIntakeDetailComponent } from './features/intake/admin-intake-detail.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -33,6 +35,13 @@ export const routes: Routes = [
   },
   { path: 'units', component: UnitsListComponent, canActivate: [authGuard] },
   { path: 'occupancies', component: CheckInComponent, canActivate: [authGuard] },
+  {
+    path: 'intake-submissions',
+    children: [
+      { path: '', component: AdminIntakeListComponent, canActivate: [authGuard] },
+      { path: ':id', component: AdminIntakeDetailComponent, canActivate: [authGuard] },
+    ],
+  },
   { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
   { path: 'users', component: UserManagementComponent, canActivate: [adminGuard] },
   { path: '**', redirectTo: 'dashboard' },
