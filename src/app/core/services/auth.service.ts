@@ -121,6 +121,13 @@ export class AuthService {
     );
   }
 
+  completePasswordSetup(token: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/auth/password/setup`, {
+      token,
+      newPassword,
+    });
+  }
+
   refreshToken(): Observable<AuthResponse> {
     const refreshToken = localStorage.getItem('refreshToken');
     return this.http

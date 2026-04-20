@@ -3,6 +3,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { LoginComponent } from './features/auth/login/login.component';
 import { OTPVerifyComponent } from './features/auth/otp-verify/otp-verify.component';
+import { PasswordSetupComponent } from './features/auth/password-setup/password-setup.component';
 import { TOTPSetupComponent } from './features/auth/totp-setup/totp-setup.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { ClientListComponent } from './features/clients/client-list/client-list.component';
@@ -25,6 +26,7 @@ export const routes: Routes = [
     path: 'auth',
     children: [
       { path: 'otp-verify', component: OTPVerifyComponent },
+      { path: 'set-password', component: PasswordSetupComponent },
       { path: 'totp-setup', component: TOTPSetupComponent, canActivate: [authGuard] },
     ],
   },
