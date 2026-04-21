@@ -20,6 +20,11 @@ export interface AuthResponse {
   };
 }
 
+export interface AdminRegisterResponse {
+  message: string;
+  user: User;
+}
+
 export interface LoginResponse {
   requiresTwoFactor: boolean;
   challengeToken: string;
@@ -41,25 +46,16 @@ export class AuthService {
 
   register(
     email: string,
-    password: string,
     firstName: string,
     lastName: string,
     role: string
-  ): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/auth/register`, {
-        email,
-        password,
-        firstName,
-        lastName,
-        role,
-      })
-      .pipe(
-        tap(response => {
-          this.storeTokens(response.tokens);
-          this.setCurrentUser(response.user);
-        })
-      );
+  ): Observable<AdminRegisterResponse> {
+    return this.http.post<AdminRegisterResponse>(`${this.apiUrl}/auth/register`, {
+      email,
+      firstName,
+      lastName,
+      role,
+    });
   }
 
   login(email: string, password: string): Observable<LoginResponse> {

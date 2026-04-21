@@ -86,7 +86,7 @@ import { HealthIndicatorComponent } from '../health/health-indicator.component';
   `,
   styles: [`
     .dashboard { display: flex; flex-direction: column; min-height: 100vh; background: #f5f5f5; }
-    .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 1rem 0; box-shadow: 0 2px 4px rgba(0,0,0,.1); }
+    .navbar { background: linear-gradient(135deg, #4f7e81 0%, #2f6f73 100%); color: #fff; padding: 1rem 0; box-shadow: 0 2px 4px rgba(0,0,0,.1); }
     .navbar-content { max-width: 1200px; margin: 0 auto; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center; }
     .logo h2 { margin: 0; font-size: 1.5rem; }
     .user-info { display: flex; gap: 1rem; align-items: center; }
@@ -97,14 +97,14 @@ import { HealthIndicatorComponent } from '../health/health-indicator.component';
     .quick-links { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 1.5rem; margin-bottom: 2rem; }
     .link-card { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1); transition: transform .2s, box-shadow .2s; }
     .link-card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
-    .link-card h3 { color: #667eea; margin-bottom: .5rem; }
+    .link-card h3 { color: #0f2854; margin-bottom: .5rem; }
     .link-card p { color: #666; font-size: .9rem; margin-bottom: 1rem; }
-    .btn { display: inline-block; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); color: #fff; padding: .75rem 1.5rem; border-radius: 4px; text-decoration: none; }
+    .btn { display: inline-block; background: linear-gradient(135deg,#4f7e81 0%,#2f6f73 100%); color: #fff; padding: .75rem 1.5rem; border-radius: 4px; text-decoration: none; }
     .info-section { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.05); }
     .info-section h2 { color: #333; margin-bottom: 1rem; }
     .info-section ul { list-style: none; padding: 0; }
     .info-section li { padding: .5rem 0 .5rem 1.5rem; position: relative; color: #666; }
-    .info-section li:before { content: '✓'; position: absolute; left: 0; color: #667eea; font-weight: bold; }
+    .info-section li:before { content: '✓'; position: absolute; left: 0; color: #2f6f73; font-weight: bold; }
   `]
 })
 export class DashboardComponent implements OnInit {

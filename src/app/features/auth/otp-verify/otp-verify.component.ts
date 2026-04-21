@@ -46,22 +46,22 @@ import { AuthService } from '../../../core/services/auth.service';
     </div>
   `,
   styles: [`
-    .otp-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .otp-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #4f7e81 0%, #2f6f73 100%); }
     .otp-card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); width: 100%; max-width: 400px; }
-    h2 { text-align: center; color: #667eea; margin-bottom: 0.5rem; }
+    h2 { text-align: center; color: #0f2854; margin-bottom: 0.5rem; }
     .subtitle { text-align: center; color: #666; margin-bottom: 1.5rem; }
     .form-group { margin-bottom: 1.5rem; position: relative; }
     label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333; }
     input { width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 4px; font-size: 1.5rem; letter-spacing: 0.5rem; text-align: center; font-family: 'Courier New', monospace; box-sizing: border-box; }
-    input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+    input:focus { outline: none; border-color: #2f6f73; box-shadow: 0 0 0 3px rgba(47, 111, 115, 0.1); }
     small { display: block; margin-top: 0.25rem; color: #999; font-size: 0.85rem; }
     .timer { text-align: center; color: #f77; font-weight: 500; margin-bottom: 1rem; }
-    button { width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; margin-bottom: 0.5rem; transition: opacity 0.2s; }
+    button { width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #4f7e81 0%, #2f6f73 100%); color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; margin-bottom: 0.5rem; transition: opacity 0.2s; }
     button:hover:not(:disabled) { opacity: 0.9; }
     button:disabled { opacity: 0.6; cursor: not-allowed; }
     .alert { padding: 1rem; border-radius: 4px; margin-bottom: 1rem; background-color: #fee; color: #c00; border: 1px solid #fcc; }
     .back-link { text-align: center; margin-top: 1rem; color: #666; font-size: 0.9rem; }
-    .back-link a { color: #667eea; text-decoration: none; }
+    .back-link a { color: #2f6f73; text-decoration: none; }
     .back-link a:hover { text-decoration: underline; }
   `]
 })
