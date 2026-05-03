@@ -27,13 +27,11 @@ describe('IntakeConfirmationComponent', () => {
     fixture.detectChanges();
   });
 
-  it('uses secure receipt wording, keeps public-safe return paths, and does not echo SSN digits', () => {
+  it('uses secure receipt wording and does not echo SSN digits', () => {
     const text = fixture.nativeElement.textContent as string;
-    const links = Array.from(fixture.nativeElement.querySelectorAll('a')) as HTMLAnchorElement[];
 
     expect(text).toContain('Your information, including your Social Security Number, has been securely received.');
     expect(text).not.toContain('123-45-6789');
     expect(text).not.toMatch(/\d{3}-\d{2}-\d{4}/);
-    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/intake', '/login']);
   });
 });

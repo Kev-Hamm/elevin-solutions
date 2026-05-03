@@ -14,14 +14,9 @@ import { Router, RouterModule } from '@angular/router';
         <p class="message">
           Your information, including your Social Security Number, has been securely received.
         </p>
-        <p class="detail" *ngIf="submittedAt; else fallbackReceiptState">
+        <p class="detail" *ngIf="submittedAt">
           Submitted at {{ submittedAt | date:'medium' }}.
         </p>
-        <ng-template #fallbackReceiptState>
-          <p class="detail">
-            Keep your confirmation ID for reference. If you refresh this page later, we may no longer have the in-browser receipt timestamp.
-          </p>
-        </ng-template>
         <p class="detail" *ngIf="confirmationId">
           Confirmation ID: {{ confirmationId }}
         </p>
@@ -29,8 +24,8 @@ import { Router, RouterModule } from '@angular/router';
           A team member may follow up for a little more review before the next step.
         </p>
         <div class="actions">
-          <a routerLink="/intake" class="btn secondary">Return to intake</a>
-          <a routerLink="/login" class="btn">Staff sign in</a>
+          <a routerLink="/" class="btn secondary">Return home</a>
+          <a routerLink="/intake" class="btn">Submit another intake</a>
         </div>
       </div>
     </div>
@@ -67,12 +62,7 @@ export class IntakeConfirmationComponent {
   private readonly router = inject(Router);
 
   readonly navigationState = this.router.getCurrentNavigation()?.extras.state ?? history.state ?? {};
-  readonly confirmationId = this.readStringState('confirmationId');
-  readonly submittedAt = this.readStringState('submittedAt');
+  readonly confirmationId = this.navigationState['confirmationId'] as string | undefined;
+  readonly submittedAt = this.navigationState['submittedAt'] as string | undefined;
   readonly flaggedForManualReview = !!this.navigationState['flaggedForManualReview'];
-
-  private readStringState(key: string): string | undefined {
-    const value = this.navigationState[key];
-    return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
-  }
 }

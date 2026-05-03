@@ -16,13 +16,9 @@ import { AdminIntakeListComponent } from './features/intake/admin-intake-list.co
 import { AdminIntakeDetailComponent } from './features/intake/admin-intake-detail.component';
 import { IntakeFormComponent } from './features/intake/intake-form.component';
 import { IntakeConfirmationComponent } from './features/intake/intake-confirmation.component';
-import { PublicHomeComponent } from './features/public/public-home.component';
 
 export const routes: Routes = [
-  { path: '', component: PublicHomeComponent, pathMatch: 'full' },
-  { path: 'about', component: PublicHomeComponent, data: { scrollTarget: 'about' } },
-  { path: 'about-us', redirectTo: 'about', pathMatch: 'full' },
-  { path: 'services', component: PublicHomeComponent, data: { scrollTarget: 'services' } },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'intake', component: IntakeFormComponent },
   { path: 'intake/confirmation', component: IntakeConfirmationComponent },
   { path: 'login', component: LoginComponent },
@@ -54,5 +50,5 @@ export const routes: Routes = [
   },
   { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
   { path: 'users', component: UserManagementComponent, canActivate: [adminGuard] },
-  { path: '**', redirectTo: '', pathMatch: 'full' },
+  { path: '**', redirectTo: 'dashboard' },
 ];

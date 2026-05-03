@@ -210,7 +210,7 @@ export class SettingsComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 
   private validateClientSide(): boolean {
