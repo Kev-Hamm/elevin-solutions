@@ -29,4 +29,10 @@ export class AdminIntakeService {
   revealSsn(id: string): Observable<{ ssn: string }> {
     return this.http.get<{ ssn: string }>(`${this.apiUrl}/${id}/ssn`);
   }
+
+  downloadPdf(id: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/pdf`, {
+      responseType: 'blob',
+    });
+  }
 }
