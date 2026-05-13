@@ -17,6 +17,7 @@ import { AdminIntakeDetailComponent } from './features/intake/admin-intake-detai
 import { IntakeFormComponent } from './features/intake/intake-form.component';
 import { IntakeConfirmationComponent } from './features/intake/intake-confirmation.component';
 import { PublicHomeComponent } from './features/public/public-home.component';
+import { NotFoundComponent } from './features/not-found/not-found.component';
 
 export const routes: Routes = [
   { path: '', component: PublicHomeComponent, pathMatch: 'full' },
@@ -44,6 +45,7 @@ export const routes: Routes = [
     ],
   },
   { path: 'units', component: UnitsListComponent, canActivate: [authGuard] },
+  { path: 'check-ins', redirectTo: 'occupancies', pathMatch: 'full' },
   { path: 'occupancies', component: CheckInComponent, canActivate: [authGuard] },
   {
     path: 'intake-submissions',
@@ -54,5 +56,5 @@ export const routes: Routes = [
   },
   { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
   { path: 'users', component: UserManagementComponent, canActivate: [adminGuard] },
-  { path: '**', redirectTo: '', pathMatch: 'full' },
+  { path: '**', component: NotFoundComponent },
 ];

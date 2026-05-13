@@ -4,116 +4,182 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService, User } from '../../core/services/auth.service';
 import { HealthIndicatorComponent } from '../health/health-indicator.component';
 
+interface DashboardNavItem {
+  label: string;
+  route: string;
+  icon: string;
+  adminOnly?: boolean;
+}
+
+interface DashboardActionCard extends DashboardNavItem {
+  title: string;
+  description: string;
+  cta: string;
+  chip: string;
+  chipTone: 'active' | 'pending' | 'restricted';
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, RouterModule, HealthIndicatorComponent],
   template: `
-    <div class="dashboard">
-      <nav class="navbar">
-        <div class="navbar-content">
-          <div class="logo">
-            <h2>Elevin Solutions</h2>
+    <div class="admin-shell">
+      <header class="admin-topbar">
+        <div class="topbar-inner">
+          <a routerLink="/" class="brand-home-link" aria-label="Elevin Solutions public home">
+            <span class="brand-mark" aria-hidden="true">E</span>
+            <span class="brand-copy">
+              <span class="eyebrow">Staff operations</span>
+              <span class="wordmark">Elevin Solutions</span>
+            </span>
+          </a>
+
+          <div class="title-block">
+            <p class="eyebrow">Protected workspace</p>
+            <h1>Staff Dashboard</h1>
           </div>
-          <div class="user-info">
+
+          <div class="topbar-actions" aria-label="Account and system status">
             <app-health-indicator></app-health-indicator>
-            <span *ngIf="currentUser">Welcome, {{ currentUser.firstName }}!</span>
-            <button (click)="logout()" class="logout-btn">Logout</button>
+            <div class="account-chip" *ngIf="currentUser">
+              <span class="account-name">{{ currentUser.firstName }}</span>
+              <span class="role-chip">{{ currentUser.role || 'staff' }}</span>
+            </div>
+            <a routerLink="/settings" class="ghost-action">Settings</a>
+            <button type="button" (click)="logout()" class="logout-btn">Logout</button>
           </div>
         </div>
-      </nav>
+      </header>
 
-      <div class="container">
-        <h1>Dashboard</h1>
+      <div class="admin-body">
+        <nav class="staff-sidebar" aria-label="Staff navigation">
+          <a
+            *ngFor="let item of visibleNavItems"
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+            [attr.aria-current]="isActiveRoute(item.route) ? 'page' : null"
+          >
+            <span aria-hidden="true">{{ item.icon }}</span>
+            <span>{{ item.label }}</span>
+          </a>
+        </nav>
 
-        <div class="welcome-section">
-          <p>
-            Welcome to Elevin Solutions. Use the menu below to manage clients, housing units,
-            and placements. We provide residential housing support — not medical care — with a
-            focus on warm, community co-living.
-          </p>
-        </div>
+        <main class="dashboard-content">
+          <section class="hero-panel" aria-labelledby="dashboard-title">
+            <div>
+              <p class="eyebrow">Elevin command center</p>
+              <h2 id="dashboard-title">Calm, secure housing operations at a glance.</h2>
+              <p>
+                Manage residents, housing units, intake submissions, and placements from one protected staff workspace. Elevin provides residential housing support — not medical care — with a focus on warm, community co-living.
+              </p>
+            </div>
+            <div class="hero-status" aria-live="polite">
+              <span class="status-chip active">API status visible in header</span>
+              <span class="status-chip restricted">Authenticated staff area</span>
+            </div>
+          </section>
 
-        <div class="quick-links">
-          <div class="link-card">
-            <h3>👥 Clients</h3>
-            <p>Manage resident profiles and history</p>
-            <a [routerLink]="['/clients']" class="btn">View Clients</a>
-          </div>
+          <section class="summary-strip" aria-label="Operations summary">
+            <article class="metric-tile">
+              <span class="metric-label">Intake queue</span>
+              <strong>Review</strong>
+              <span class="metric-note">Masked records only</span>
+            </article>
+            <article class="metric-tile">
+              <span class="metric-label">Units</span>
+              <strong>Track</strong>
+              <span class="metric-note">Housing availability</span>
+            </article>
+            <article class="metric-tile">
+              <span class="metric-label">Clients</span>
+              <strong>Support</strong>
+              <span class="metric-note">Resident profiles</span>
+            </article>
+            <article class="metric-tile" *ngIf="currentUser?.role === 'admin'">
+              <span class="metric-label">Staff setup</span>
+              <strong>Admin</strong>
+              <span class="metric-note">Invites and accounts</span>
+            </article>
+          </section>
 
-          <div class="link-card">
-            <h3>🏠 Units</h3>
-            <p>Manage housing units and bed availability</p>
-            <a routerLink="/units" class="btn">View Units</a>
-          </div>
+          <section class="action-grid" aria-labelledby="actions-title">
+            <div class="section-heading">
+              <p class="eyebrow">Primary actions</p>
+              <h2 id="actions-title">Where staff go next</h2>
+            </div>
 
-          <div class="link-card">
-            <h3>📋 Check-Ins</h3>
-            <p>Place residents into available units</p>
-            <a routerLink="/occupancies" class="btn">Start Check-In</a>
-          </div>
+            <article class="action-card" *ngFor="let card of visibleActionCards">
+              <div class="card-heading">
+                <span class="card-icon" aria-hidden="true">{{ card.icon }}</span>
+                <div>
+                  <h3>{{ card.title }}</h3>
+                  <span class="status-chip" [ngClass]="card.chipTone">{{ card.chip }}</span>
+                </div>
+              </div>
+              <p>{{ card.description }}</p>
+              <a [routerLink]="card.route" class="primary-link">{{ card.cta }}</a>
+            </article>
+          </section>
 
-          <div class="link-card">
-            <h3>📝 Intake submissions</h3>
-            <p>Review masked intake records and open submission details</p>
-            <a routerLink="/intake-submissions" class="btn">View Intake Queue</a>
-          </div>
+          <section class="lower-grid">
+            <article class="ops-panel" aria-labelledby="attention-title" aria-live="polite">
+              <p class="eyebrow">Needs attention</p>
+              <h2 id="attention-title">No urgent staff actions right now.</h2>
+              <p>Use the intake queue and health status pill to check for pending reviews or API issues. No fake metrics are shown until backend counts are wired.</p>
+            </article>
 
-          <div class="link-card" *ngIf="currentUser?.role === 'admin'">
-            <h3>👤 Users</h3>
-            <p>Invite staff and track pending account setup</p>
-            <a routerLink="/users" class="btn">Manage Users</a>
-          </div>
-
-          <div class="link-card">
-            <h3>⚙️ Settings</h3>
-            <p>Manage account and security settings</p>
-            <a routerLink="/settings" class="btn">Go to Settings</a>
-          </div>
-        </div>
-
-        <div class="info-section">
-          <h2>Getting Started</h2>
-          <ul>
-            <li>Create residents in the system</li>
-            <li>Add housing units to track capacity</li>
-            <li>Use check-in to assign residents to units</li>
-            <li>Track placements and non-medical housing support</li>
-          </ul>
-        </div>
+            <article class="ops-panel" aria-labelledby="guide-title">
+              <p class="eyebrow">Staff guide</p>
+              <h2 id="guide-title">Getting started</h2>
+              <ul class="guide-list">
+                <li>Create residents in the system.</li>
+                <li>Add housing units to track capacity.</li>
+                <li>Use check-ins to assign residents to units.</li>
+                <li>Track placements and non-medical housing support.</li>
+              </ul>
+            </article>
+          </section>
+        </main>
       </div>
     </div>
   `,
-  styles: [`
-    .dashboard { display: flex; flex-direction: column; min-height: 100vh; background: #f5f5f5; }
-    .navbar { background: linear-gradient(135deg, #4f7e81 0%, #2f6f73 100%); color: #fff; padding: 1rem 0; box-shadow: 0 2px 4px rgba(0,0,0,.1); }
-    .navbar-content { max-width: 1200px; margin: 0 auto; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center; }
-    .logo h2 { margin: 0; font-size: 1.5rem; }
-    .user-info { display: flex; gap: 1rem; align-items: center; }
-    .logout-btn { background: rgba(255,255,255,.2); color: #fff; border: 1px solid #fff; padding: .5rem 1rem; border-radius: 4px; cursor: pointer; }
-    .container { flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 2rem 1rem; }
-    h1 { color: #333; margin-bottom: 1rem; }
-    .welcome-section { background: #fff; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,.05); }
-    .quick-links { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-    .link-card { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1); transition: transform .2s, box-shadow .2s; }
-    .link-card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
-    .link-card h3 { color: #0f2854; margin-bottom: .5rem; }
-    .link-card p { color: #666; font-size: .9rem; margin-bottom: 1rem; }
-    .btn { display: inline-block; background: linear-gradient(135deg,#4f7e81 0%,#2f6f73 100%); color: #fff; padding: .75rem 1.5rem; border-radius: 4px; text-decoration: none; }
-    .info-section { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.05); }
-    .info-section h2 { color: #333; margin-bottom: 1rem; }
-    .info-section ul { list-style: none; padding: 0; }
-    .info-section li { padding: .5rem 0 .5rem 1.5rem; position: relative; color: #666; }
-    .info-section li:before { content: '✓'; position: absolute; left: 0; color: #2f6f73; font-weight: bold; }
-  `]
 })
 export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
+
+  readonly navItems: DashboardNavItem[] = [
+    { label: 'Dashboard', route: '/dashboard', icon: '▣' },
+    { label: 'Clients', route: '/clients', icon: '👥' },
+    { label: 'Units', route: '/units', icon: '🏠' },
+    { label: 'Check-ins', route: '/occupancies', icon: '📋' },
+    { label: 'Intake Queue', route: '/intake-submissions', icon: '📝' },
+    { label: 'Users', route: '/users', icon: '👤', adminOnly: true },
+    { label: 'Settings', route: '/settings', icon: '⚙️' },
+  ];
+
+  readonly actionCards: DashboardActionCard[] = [
+    { label: 'Clients', title: 'Clients', route: '/clients', icon: '👥', description: 'Manage resident profiles and history.', cta: 'View clients', chip: 'Active records', chipTone: 'active' },
+    { label: 'Units', title: 'Units', route: '/units', icon: '🏠', description: 'Track housing units and bed availability.', cta: 'View units', chip: 'Capacity', chipTone: 'active' },
+    { label: 'Check-ins', title: 'Check-ins', route: '/occupancies', icon: '📋', description: 'Assign residents to available units.', cta: 'Start check-in', chip: 'Placement flow', chipTone: 'pending' },
+    { label: 'Intake submissions', title: 'Intake submissions', route: '/intake-submissions', icon: '📝', description: 'Review masked intake records and submission details.', cta: 'Open intake queue', chip: 'SSN masked', chipTone: 'restricted' },
+    { label: 'Users', title: 'Users', route: '/users', icon: '👤', description: 'Invite staff and manage account setup.', cta: 'Manage users', chip: 'Admin only', chipTone: 'restricted', adminOnly: true },
+    { label: 'Settings', title: 'Settings', route: '/settings', icon: '⚙️', description: 'Security, password, and account settings.', cta: 'Go to settings', chip: 'Account', chipTone: 'pending' },
+  ];
 
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
+
+  get visibleNavItems(): DashboardNavItem[] {
+    return this.navItems.filter((item) => !item.adminOnly || this.currentUser?.role === 'admin');
+  }
+
+  get visibleActionCards(): DashboardActionCard[] {
+    return this.actionCards.filter((card) => !card.adminOnly || this.currentUser?.role === 'admin');
+  }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUserSync();
@@ -124,6 +190,10 @@ export class DashboardComponent implements OnInit {
         error: () => { this.router.navigate(['/login']); },
       });
     }
+  }
+
+  isActiveRoute(route: string): boolean {
+    return this.router.url === route || (route !== '/dashboard' && this.router.url.startsWith(`${route}/`));
   }
 
   logout(): void {

@@ -1,67 +1,83 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   template: `
-    <div class="login-container">
-      <div class="login-card">
-        <h1>Elevin Solutions</h1>
-        <p class="subtitle">Residential housing support (non-medical)</p>
+    <div class="auth-shell login-auth-shell">
+      <a routerLink="/" class="auth-brand-link" aria-label="Elevin Solutions public home">
+        <span class="brand-mark" aria-hidden="true">E</span>
+        <span>
+          <strong>Elevin Solutions</strong>
+          <small>Staff portal</small>
+        </span>
+      </a>
 
-        <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+      <main class="auth-layout" aria-labelledby="login-title">
+        <section class="auth-card login-card">
+          <p class="auth-eyebrow">Staff portal</p>
+          <h1 id="login-title" class="auth-title">Sign in to Elevin</h1>
+          <p class="auth-lede">
+            Use your staff credentials to review referrals and manage housing operations.
+          </p>
 
-        <form (ngSubmit)="onSubmit()">
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              [(ngModel)]="email"
-              name="email"
-              required
-              autocomplete="email"
-            />
+          <div class="auth-security-note">
+            A one-time verification code is required before dashboard access.
           </div>
 
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              [(ngModel)]="password"
-              name="password"
-              required
-              autocomplete="current-password"
-            />
-          </div>
+          <div *ngIf="error" class="auth-alert error" role="alert">{{ error }}</div>
 
-          <button type="submit" [disabled]="loading">
-            {{ loading ? 'Sending verification code...' : 'Login' }}
-          </button>
-        </form>
-      </div>
+          <form class="auth-form" (ngSubmit)="onSubmit()" novalidate>
+            <div class="auth-field">
+              <label for="email">Staff email</label>
+              <input
+                class="auth-input"
+                type="email"
+                id="email"
+                [(ngModel)]="email"
+                name="email"
+                required
+                autocomplete="email"
+              />
+            </div>
+
+            <div class="auth-field">
+              <label for="password">Password</label>
+              <input
+                class="auth-input"
+                type="password"
+                id="password"
+                [(ngModel)]="password"
+                name="password"
+                required
+                autocomplete="current-password"
+              />
+            </div>
+
+            <button class="auth-primary-button" type="submit" [disabled]="loading || !email || !password">
+              {{ loading ? 'Sending verification code...' : 'Continue securely' }}
+            </button>
+          </form>
+
+          <a routerLink="/" class="auth-secondary-link">Back to public home</a>
+        </section>
+
+        <aside class="auth-companion-card" aria-label="Secure housing operations">
+          <p class="auth-eyebrow">Secure housing operations</p>
+          <h2>A calm staff entry point for intake, clients, units, and check-ins.</h2>
+          <p>
+            Built for protected daily workflows with two-factor verification before staff dashboard access.
+          </p>
+        </aside>
+      </main>
     </div>
   `,
-  styles: [`
-    .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #4f7e81 0%, #2f6f73 100%); }
-    .login-card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); width: 100%; max-width: 400px; }
-    h1 { text-align: center; color: #0f2854; margin-bottom: 0.5rem; }
-    .subtitle { text-align: center; color: #666; margin-bottom: 2rem; }
-    .form-group { margin-bottom: 1.5rem; }
-    label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333; }
-    input { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box; }
-    input:focus { outline: none; border-color: #2f6f73; box-shadow: 0 0 0 3px rgba(47, 111, 115, 0.1); }
-    button { width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #4f7e81 0%, #2f6f73 100%); color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; transition: opacity 0.2s; }
-    button:hover:not(:disabled) { opacity: 0.9; }
-    button:disabled { opacity: 0.6; cursor: not-allowed; }
-    .alert { padding: 1rem; background-color: #fee; color: #c00; border: 1px solid #fcc; border-radius: 4px; margin-bottom: 1rem; }
-  `]
+  styles: []
 })
 export class LoginComponent {
   email = '';
@@ -80,7 +96,7 @@ export class LoginComponent {
 
   onSubmit(): void {
     if (!this.email || !this.password) {
-      this.error = 'Email and password are required';
+      this.error = 'Staff email and password are required.';
       return;
     }
 
@@ -96,7 +112,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.error = err.error?.message || 'Login failed. Please try again.';
+        this.error = err.error?.message || 'Unable to sign in. Please check your credentials and try again.';
       },
     });
   }

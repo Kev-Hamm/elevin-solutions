@@ -9,67 +9,71 @@ import { ApiService } from '../../../core/services/api.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   template: `
-    <div class="container">
-      <div class="header">
-        <h1>New Client</h1>
-        <a routerLink="/clients" class="btn secondary">Back to List</a>
+    <div class="admin-route-shell clients-page client-form-page">
+      <div class="admin-route-topbar">
+        <a routerLink="/" class="brand-home-link" aria-label="Elevin Solutions public home">Elevin Solutions</a>
+        <span>Resident support</span>
+        <a routerLink="/dashboard" class="pill-button secondary">Back to dashboard</a>
       </div>
 
-      <div class="card">
-        <form (ngSubmit)="onSubmit()">
-          <div class="form-group">
-            <label for="firstName">First Name</label>
-            <input type="text" id="firstName" [(ngModel)]="form.firstName" name="firstName" required />
+      <main class="admin-route-body narrow">
+        <section class="route-hero-card">
+          <div>
+            <p class="eyebrow">Resident support</p>
+            <h1>Add client</h1>
+            <p>Create a minimal resident profile for housing coordination. Date of birth and address stay on this form surface and are not shown in the directory.</p>
           </div>
+          <a routerLink="/clients" class="pill-button secondary">Back to clients</a>
+        </section>
 
-          <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" [(ngModel)]="form.lastName" name="lastName" required />
-          </div>
+        <div class="route-layout two-column-form">
+          <section class="surface-card client-form-card">
+            <form (ngSubmit)="onSubmit()">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="firstName">First name</label>
+                  <input type="text" id="firstName" [(ngModel)]="form.firstName" name="firstName" required />
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last name</label>
+                  <input type="text" id="lastName" [(ngModel)]="form.lastName" name="lastName" required />
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" [(ngModel)]="form.email" name="email" autocomplete="email" />
+                </div>
+                <div class="form-group">
+                  <label for="phone">Phone</label>
+                  <input type="tel" id="phone" [(ngModel)]="form.phone" name="phone" autocomplete="tel" />
+                </div>
+                <div class="form-group full-width">
+                  <label for="address">Address</label>
+                  <input type="text" id="address" [(ngModel)]="form.address" name="address" autocomplete="street-address" />
+                </div>
+                <div class="form-group">
+                  <label for="dob">Date of birth</label>
+                  <input type="date" id="dob" [(ngModel)]="form.dateOfBirth" name="dateOfBirth" />
+                </div>
+              </div>
 
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" [(ngModel)]="form.email" name="email" />
-          </div>
+              <div *ngIf="error" class="error-banner" role="alert">{{ error }}</div>
 
-          <div class="form-group">
-            <label for="phone">Phone</label>
-            <input type="tel" id="phone" [(ngModel)]="form.phone" name="phone" />
-          </div>
+              <div class="form-actions">
+                <button type="submit" class="pill-button primary" [disabled]="loading">{{ loading ? 'Saving client...' : 'Save client' }}</button>
+                <a routerLink="/clients" class="pill-button secondary">Cancel</a>
+              </div>
+            </form>
+          </section>
 
-          <div class="form-group">
-            <label for="address">Address</label>
-            <input type="text" id="address" [(ngModel)]="form.address" name="address" />
-          </div>
-
-          <div class="form-group">
-            <label for="dob">Date of Birth</label>
-            <input type="date" id="dob" [(ngModel)]="form.dateOfBirth" name="dateOfBirth" />
-          </div>
-
-          <div *ngIf="error" class="alert">{{ error }}</div>
-
-          <div class="form-actions">
-            <button type="submit" class="btn" [disabled]="loading">{{ loading ? 'Saving...' : 'Save Client' }}</button>
-            <a routerLink="/clients" class="btn secondary">Cancel</a>
-          </div>
-        </form>
-      </div>
+          <aside class="sage-panel client-privacy-note">
+            <p class="eyebrow">Privacy note</p>
+            <h2>Keep the profile focused.</h2>
+            <p>Client DOB and address are PII. Use only for residential support coordination and avoid adding medical or treatment framing.</p>
+          </aside>
+        </div>
+      </main>
     </div>
   `,
-  styles: [`
-    .container { max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-    h1 { color: #333; }
-    .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.05); }
-    .form-group { margin-bottom: 1.5rem; }
-    label { display: block; font-weight: 500; color: #333; margin-bottom: .5rem; }
-    input { width: 100%; padding: .75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; }
-    .form-actions { display: flex; gap: 1rem; margin-top: 2rem; }
-    .btn { flex: 1; padding: .75rem; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); color: #fff; border: 0; border-radius: 4px; text-align: center; text-decoration: none; cursor: pointer; }
-    .btn.secondary { background: #666; }
-    .alert { padding: 1rem; background: #fee; color: #900; border: 1px solid #fcc; border-radius: 6px; }
-  `]
 })
 export class ClientFormComponent implements OnInit {
   form: any = { firstName: '', lastName: '', email: '', phone: '', address: '', dateOfBirth: '' };

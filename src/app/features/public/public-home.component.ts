@@ -1,5 +1,5 @@
 import { CommonModule, ViewportScroller } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { merge } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
@@ -9,18 +9,65 @@ import { AuthService } from '../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="public-shell">
+    <div class="public-shell" [class.menu-open]="mobileMenuOpen">
       <header class="topbar">
-        <a routerLink="/" class="brand" aria-label="Elevin Solutions home">
-<span>Elevin Solutions</span>
+        <a routerLink="/" class="brand" aria-label="Elevin Solutions home" (click)="closeMobileMenu(false)">
+          <span>Elevin Solutions</span>
         </a>
-        <nav class="nav" aria-label="Public navigation">
+
+        <nav class="desktop-nav" aria-label="Public navigation">
           <a href="#about">About</a>
           <a href="#services">Services</a>
-          <a routerLink="/intake" class="nav-primary">Start public intake</a>
+          <a routerLink="/intake" class="nav-primary">Start Intake</a>
           <a routerLink="/login" class="login-link">Staff login</a>
         </nav>
+
+        <div class="mobile-header-actions" aria-label="Mobile public navigation actions">
+          <a routerLink="/intake" class="mobile-start-cta">Start Intake</a>
+          <button
+            #menuButton
+            type="button"
+            class="hamburger-button"
+            [attr.aria-label]="mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'"
+            [attr.aria-expanded]="mobileMenuOpen"
+            aria-controls="mobile-navigation-drawer"
+            (click)="toggleMobileMenu()"
+          >
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </button>
+        </div>
       </header>
+
+      <div
+        class="mobile-menu-overlay"
+        [class.open]="mobileMenuOpen"
+        [attr.aria-hidden]="!mobileMenuOpen"
+        (click)="closeMobileMenu()"
+      ></div>
+
+      <aside
+        #drawer
+        id="mobile-navigation-drawer"
+        class="mobile-drawer"
+        [class.open]="mobileMenuOpen"
+        [attr.aria-hidden]="!mobileMenuOpen"
+        aria-label="Mobile navigation menu"
+        (keydown)="onDrawerKeydown($event)"
+      >
+        <div class="drawer-header">
+          <span class="drawer-brand">Elevin Solutions</span>
+          <button type="button" class="drawer-close" aria-label="Close navigation menu" (click)="closeMobileMenu()">×</button>
+        </div>
+        <nav class="drawer-nav" aria-label="Mobile public navigation links">
+          <a routerLink="/intake" class="drawer-primary" (click)="closeMobileMenu(false)">Start Intake</a>
+          <a href="#about" (click)="closeMobileMenu(false)">About</a>
+          <a href="#services" (click)="closeMobileMenu(false)">Services</a>
+          <a routerLink="/login" (click)="closeMobileMenu(false)">Staff login</a>
+          <a *ngIf="isLoggedIn" routerLink="/dashboard" (click)="closeMobileMenu(false)">Open dashboard</a>
+        </nav>
+      </aside>
 
       <main>
         <section class="hero" aria-labelledby="hero-title">
@@ -32,7 +79,7 @@ import { AuthService } from '../../core/services/auth.service';
               to begin intake, understand services, and connect with staff without confusion.
             </p>
             <div class="actions" aria-label="Primary public actions">
-              <a routerLink="/intake" class="btn btn-primary">Start public intake</a>
+              <a routerLink="/intake" class="btn btn-primary hero-primary-cta">Start Intake</a>
               <a href="#services" class="btn btn-secondary">Explore services</a>
               <a *ngIf="isLoggedIn" routerLink="/dashboard" class="btn btn-tertiary">Open dashboard</a>
             </div>
@@ -53,7 +100,7 @@ import { AuthService } from '../../core/services/auth.service';
           </figure>
         </section>
 
-        <section id="about" class="about-section" aria-labelledby="about-title">
+        <section id="about" class="about-section section-surface" aria-labelledby="about-title">
           <div class="card about-card">
             <p class="section-kicker">About</p>
             <h2 id="about-title">Housing support that feels stable, respectful, and trustworthy.</h2>
@@ -78,7 +125,7 @@ import { AuthService } from '../../core/services/auth.service';
           </div>
         </section>
 
-        <section id="services" class="services-section" aria-labelledby="services-title">
+        <section id="services" class="services-section section-surface alt" aria-labelledby="services-title">
           <div class="section-heading">
             <p class="section-kicker">Services</p>
             <h2 id="services-title">How we help people move forward</h2>
@@ -113,21 +160,27 @@ import { AuthService } from '../../core/services/auth.service';
               Complete the public intake form when you are ready. Elevin staff will use your submission to understand your needs and follow up with care.
             </p>
           </div>
-          <a routerLink="/intake" class="btn btn-primary btn-large">Complete intake form</a>
+          <a routerLink="/intake" class="btn btn-primary btn-large">Start Intake</a>
         </section>
       </main>
+
+      <div class="sticky-intake-cta" aria-label="Mobile quick intake action">
+        <a routerLink="/intake" class="btn btn-primary">Start Intake</a>
+      </div>
     </div>
   `,
-  styles: [`
-    :host{display:block;min-height:100vh;background:linear-gradient(#fbf4ea,#edf3ef);color:#172033}.public-shell{max-width:1180px;margin:auto;padding:24px 20px 72px;overflow-x:hidden}.topbar,.nav,.actions,.intake-band{display:flex;align-items:center}.topbar{justify-content:space-between;gap:16px;margin-bottom:30px;flex-wrap:wrap;padding:14px 16px;border:1px solid #e2d9cf;border-radius:999px;background:#fffbf4}.brand{color:#0f2854;font-weight:800;text-decoration:none}.nav{flex-wrap:wrap;gap:10px}.nav a{color:#2f5f63;text-decoration:none;font-weight:700;min-height:44px;display:inline-flex;align-items:center;border-radius:999px;padding:0 .7rem}.nav a:focus-visible,.btn:focus-visible,.brand:focus-visible,.staff-note a:focus-visible{outline:3px solid #d8ac65;outline-offset:3px}.nav-primary{background:#0f2854;color:#fff!important}.login-link{border:1px solid #0f28542e;color:#0f2854!important;background:#fff}.hero{display:grid;grid-template-columns:1fr minmax(340px,.85fr);gap:clamp(24px,5vw,56px);align-items:center;padding:clamp(28px,5vw,54px);margin-bottom:24px;background:#ffffffcc;border:1px solid #e2d9cf;border-radius:34px}.eyebrow,.section-kicker{margin:0 0 10px;text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;color:#a96f25;font-weight:800}h1,h2{margin:0 0 14px;color:#0f2854;font-family:Georgia,serif;line-height:1.05}h1{font-size:clamp(2.25rem,5.8vw,4.6rem);letter-spacing:-.045em}h2{font-size:clamp(1.7rem,3vw,2.55rem)}h3{margin:0 0 8px;color:#0f2854}.lede,p{line-height:1.65}.lede,.card p,.section-heading p{color:#344055;max-width:760px}.lede{font-size:1.13rem;margin:0}.actions{flex-wrap:wrap;gap:12px;margin-top:26px}.btn{text-decoration:none;border-radius:999px;padding:.95rem 1.24rem;min-height:48px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;text-align:center}.btn-primary{background:#0f2854;color:#fff}.btn-secondary{background:#fff;color:#0f2854;border:1px solid #0f28542e}.btn-tertiary{background:#0f285414;color:#0f2854}.staff-note{margin:18px 0 0;color:#5d6472}.staff-note a{color:#2f5f63;font-weight:800}.hero-image-card{position:relative;margin:0;min-height:540px;border-radius:32px;overflow:hidden;background:#d9c5ac}.hero-image-card img{width:100%;height:100%;min-height:540px;object-fit:cover;display:block}.hero-image-card figcaption{position:absolute;left:18px;right:18px;bottom:18px;z-index:1;padding:16px;border-radius:22px;background:#fffbf4eb;color:#344055}.hero-image-card span,.trust-card strong{display:block;color:#0f2854;font-weight:900}.about-section{display:grid;grid-template-columns:1.2fr .8fr;gap:20px;margin-bottom:24px}.card,.trust-card,.services-section,.intake-band{background:#ffffffe0;border:1px solid #e2d9cf;border-radius:28px;padding:30px}.trust-card{display:grid;gap:16px;align-content:center;background:#f3f8f3}.service-list article{padding:18px;border-radius:22px;background:#fff;border:1px solid #2f5f631f}.trust-card span,.service-list p{color:#4b5568}.services-section{margin-bottom:24px}.section-heading{max-width:740px;margin-bottom:22px}.service-list{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card-number{color:#a96f25;font-weight:900}.intake-band{justify-content:space-between;gap:24px;background:#0f2854;color:#fff}.intake-band h2{color:#fff}.intake-band .section-kicker{color:#f4d59f}.intake-band p{color:#ffffffdb;margin-bottom:0}.intake-band .btn-primary{background:#fff;color:#0f2854;flex:0 0 auto}@media(max-width:900px){.hero,.about-section{grid-template-columns:1fr}.hero-image-card{order:-1}.hero-image-card,.hero-image-card img{min-height:400px}.service-list{grid-template-columns:1fr}.intake-band{align-items:flex-start;flex-direction:column}}@media(max-width:700px){.public-shell{padding:16px 14px 48px}.topbar{align-items:flex-start;border-radius:24px}.hero,.card,.trust-card,.services-section,.intake-band{padding:22px;border-radius:22px}.hero-image-card,.hero-image-card img{min-height:340px;max-height:420px}.hero-image-card figcaption{left:12px;right:12px;bottom:12px}.actions,.btn,.intake-band .btn-primary{width:100%}}
-  `],
+  styles: []
 })
-export class PublicHomeComponent implements OnInit {
+export class PublicHomeComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly viewportScroller = inject(ViewportScroller);
   private readonly authService = inject(AuthService);
 
+  @ViewChild('menuButton') private readonly menuButton?: ElementRef<HTMLButtonElement>;
+  @ViewChild('drawer') private readonly drawer?: ElementRef<HTMLElement>;
+
   readonly isLoggedIn = this.authService.isLoggedIn();
+  mobileMenuOpen = false;
 
   ngOnInit(): void {
     merge(this.route.fragment, this.route.data).subscribe(() => {
@@ -140,5 +193,86 @@ export class PublicHomeComponent implements OnInit {
         this.viewportScroller.scrollToPosition([0, 0]);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.unlockBodyScroll();
+  }
+
+  @HostListener('window:keydown.escape')
+  onEscape(): void {
+    if (this.mobileMenuOpen) {
+      this.closeMobileMenu();
+    }
+  }
+
+  toggleMobileMenu(): void {
+    if (this.mobileMenuOpen) {
+      this.closeMobileMenu();
+    } else {
+      this.openMobileMenu();
+    }
+  }
+
+  openMobileMenu(): void {
+    this.mobileMenuOpen = true;
+    this.lockBodyScroll();
+    setTimeout(() => this.getFocusableDrawerElements()[0]?.focus(), 0);
+  }
+
+  closeMobileMenu(returnFocus = true): void {
+    if (!this.mobileMenuOpen) {
+      return;
+    }
+
+    this.mobileMenuOpen = false;
+    this.unlockBodyScroll();
+
+    if (returnFocus) {
+      setTimeout(() => this.menuButton?.nativeElement.focus(), 0);
+    }
+  }
+
+  onDrawerKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Tab' || !this.mobileMenuOpen) {
+      return;
+    }
+
+    const focusable = this.getFocusableDrawerElements();
+    if (focusable.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement;
+
+    if (event.shiftKey && active === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  private getFocusableDrawerElements(): HTMLElement[] {
+    const drawerElement = this.drawer?.nativeElement;
+    if (!drawerElement) {
+      return [];
+    }
+
+    return Array.from(
+      drawerElement.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+    ).filter(element => !element.hasAttribute('disabled') && element.getAttribute('aria-hidden') !== 'true');
+  }
+
+  private lockBodyScroll(): void {
+    document.body.style.overflow = 'hidden';
+  }
+
+  private unlockBodyScroll(): void {
+    document.body.style.overflow = '';
   }
 }

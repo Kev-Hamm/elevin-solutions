@@ -1,75 +1,137 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { ApiService, Client, Unit } from '../../core/services/api.service';
 
 @Component({
   selector: 'app-check-in',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   template: `
-    <div class="container">
-      <h1>Check-In</h1>
-      <div class="card">
-        <form (ngSubmit)="onSubmit()">
-          <div class="form-row">
-            <label>Client</label>
-            <select [(ngModel)]="form.clientId" name="clientId" required>
-              <option [ngValue]="''" disabled>Select a client</option>
-              <option *ngFor="let c of clients" [ngValue]="c.id">{{ c.firstName }} {{ c.lastName }}</option>
-            </select>
-          </div>
-
-          <div class="form-row">
-            <label>Unit</label>
-            <select [(ngModel)]="form.unitId" name="unitId" required>
-              <option [ngValue]="''" disabled>Select a unit</option>
-              <option *ngFor="let u of units" [ngValue]="u.id">{{ u.name }} (available: {{ u.available }})</option>
-            </select>
-          </div>
-
-          <div class="form-row">
-            <label>Start Date</label>
-            <input type="date" [(ngModel)]="form.startDate" name="startDate" required />
-          </div>
-
-          <div *ngIf="success" class="success">Client checked in successfully.</div>
-          <div *ngIf="error" class="alert">{{ error }}</div>
-
-          <button class="btn" type="submit" [disabled]="loading">{{ loading ? 'Checking In...' : 'Check In' }}</button>
-        </form>
+    <div class="admin-route-shell checkins-page">
+      <div class="admin-route-topbar">
+        <a routerLink="/" class="brand-home-link" aria-label="Elevin Solutions public home">Elevin Solutions</a>
+        <span>Placement workflow</span>
+        <a routerLink="/dashboard" class="pill-button secondary">Back to dashboard</a>
       </div>
+
+      <main class="admin-route-body">
+        <section class="route-hero-card">
+          <div>
+            <p class="eyebrow">Placement workflow</p>
+            <h1>Check-ins</h1>
+            <p>Assign a client to an available housing unit and record the placement start date.</p>
+          </div>
+          <div class="hero-actions"><a routerLink="/units" class="pill-button secondary">View units</a></div>
+        </section>
+
+        <div class="route-layout support-right">
+          <section class="surface-card checkin-workflow-card">
+            <ol class="checkin-step-rail" aria-label="Check-in steps">
+              <li><strong>1</strong><span>Select client</span></li>
+              <li><strong>2</strong><span>Choose unit</span></li>
+              <li><strong>3</strong><span>Confirm start date</span></li>
+            </ol>
+
+            <div *ngIf="loadingLists" class="loading-state" aria-live="polite">Loading clients and units...</div>
+            <div *ngIf="listError" class="error-banner" role="alert">{{ listError }}</div>
+
+            <div *ngIf="!loadingLists && clients.length === 0" class="empty-state">
+              <h3>Add a client before starting check-in.</h3>
+              <a routerLink="/clients/new" class="pill-button primary">Add client</a>
+            </div>
+            <div *ngIf="!loadingLists && availableUnits.length === 0" class="empty-state">
+              <h3>No available units are currently listed.</h3>
+              <a routerLink="/units" class="pill-button secondary">View units</a>
+            </div>
+
+            <form (ngSubmit)="onSubmit()" *ngIf="!loadingLists && clients.length > 0 && availableUnits.length > 0">
+              <div class="checkin-field-grid">
+                <div class="form-group">
+                  <label for="clientId">Client</label>
+                  <select id="clientId" [(ngModel)]="form.clientId" name="clientId" required>
+                    <option [ngValue]="''" disabled>Select a client</option>
+                    <option *ngFor="let c of clients" [ngValue]="c.id">{{ c.firstName }} {{ c.lastName }}</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="unitId">Unit</label>
+                  <select id="unitId" [(ngModel)]="form.unitId" name="unitId" required>
+                    <option [ngValue]="''" disabled>Select a unit</option>
+                    <option *ngFor="let u of availableUnits" [ngValue]="u.id">{{ u.name }} — {{ u.available }} available</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="startDate">Start date</label>
+                  <input id="startDate" type="date" [(ngModel)]="form.startDate" name="startDate" required />
+                </div>
+              </div>
+
+              <div *ngIf="success" class="success-banner checkin-success-card" role="status">
+                Client checked in successfully.
+                <button type="button" class="pill-button secondary" (click)="resetForm()">Check in another client</button>
+                <a routerLink="/units" class="pill-button secondary">View units</a>
+              </div>
+              <div *ngIf="error" class="error-banner" role="alert">{{ error }}</div>
+
+              <button class="pill-button primary" type="submit" [disabled]="loading || !form.clientId || !form.unitId || !form.startDate">
+                {{ loading ? 'Completing check-in...' : 'Complete check-in' }}
+              </button>
+            </form>
+          </section>
+
+          <aside class="sage-panel checkin-readiness-panel">
+            <p class="eyebrow">Before check-in</p>
+            <h2>Readiness checklist</h2>
+            <ul><li>Verify resident profile.</li><li>Confirm unit availability.</li><li>Confirm placement start date.</li></ul>
+          </aside>
+        </div>
+      </main>
     </div>
   `,
-  styles: [`
-    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-    .card { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.05); }
-    .form-row { margin-bottom: 1rem; display: flex; flex-direction: column; }
-    label { font-weight: 500; color: #333; margin-bottom: .5rem; }
-    select, input { padding: .75rem; border: 1px solid #ddd; border-radius: 4px; }
-    .btn { padding: .75rem 1.5rem; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); color: #fff; border: 0; border-radius: 4px; cursor: pointer; }
-    .alert { padding: 1rem; background: #fee; color: #900; border: 1px solid #fcc; border-radius: 6px; margin-top: 1rem; }
-    .success { padding: 1rem; background: #eefcee; color: #0a8025; border: 1px solid #bbf0c5; border-radius: 6px; margin-top: 1rem; }
-  `]
 })
 export class CheckInComponent {
   clients: Client[] = [];
   units: Unit[] = [];
   form = { clientId: '', unitId: '', startDate: '' };
   loading = false;
+  loadingLists = true;
+  listError = '';
   error = '';
   success = false;
 
   constructor(private api: ApiService) {
-    this.api.getClients().subscribe({ next: (d) => this.clients = d });
-    this.api.getUnits().subscribe({ next: (d) => this.units = d });
+    this.loadLists();
+  }
+
+  get availableUnits(): Unit[] {
+    return this.units.filter(u => Number(u.available) > 0);
+  }
+
+  loadLists(): void {
+    this.loadingLists = true;
+    this.listError = '';
+    forkJoin({ clients: this.api.getClients(), units: this.api.getUnits() }).subscribe({
+      next: ({ clients, units }) => { this.clients = clients; this.units = units; this.loadingLists = false; },
+      error: (err) => { this.listError = err.error?.message || 'Unable to load clients and units right now.'; this.loadingLists = false; }
+    });
+  }
+
+  resetForm(): void {
+    this.form = { clientId: '', unitId: '', startDate: '' };
+    this.success = false;
+    this.error = '';
   }
 
   onSubmit(): void {
     this.loading = true; this.error = ''; this.success = false;
     this.api.createOccupancy(this.form).subscribe({
       next: () => { this.loading = false; this.success = true; },
-      error: (err) => { this.loading = false; this.error = err.error?.message || 'Failed to check in'; }
+      error: (err) => { this.loading = false; this.error = err.error?.message || 'Unable to complete check-in right now.'; }
     });
   }
 }
