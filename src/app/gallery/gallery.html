@@ -1,0 +1,27 @@
+<app-nav></app-nav>
+
+<div class="page">
+  <section class="hero">
+    <div class="container">
+      <h1>Gallery</h1>
+      <p>
+        A look at the welcoming, accessible, and supportive living environments we build for our
+        residents.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container gallery-grid">
+      <article class="gallery-card" *ngFor="let item of items">
+        <div class="gallery-card__media">
+          <img [src]="item.src" [alt]="item.alt" loading="lazy" />
+        </div>
+        <div class="gallery-card__body">
+          <h2>{{ item.title }}</h2>
+          <p>{{ item.description }}</p>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

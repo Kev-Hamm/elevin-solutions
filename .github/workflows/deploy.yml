@@ -65,7 +65,7 @@ jobs:
             BASE_PATH="/${{ github.event.repository.name }}/"
           fi
           echo "Using base href: $BASE_PATH"
-          npx ng build --configuration production --base-href "$BASE_PATH" --deploy-url "$BASE_PATH" --output-path "$SITE_DIR"
+          npx ng build --configuration production --base-href "$BASE_PATH" --deploy-url "$BASE_PATH" --output-path dist-site
 
       - name: Add Pages files
         run: |
