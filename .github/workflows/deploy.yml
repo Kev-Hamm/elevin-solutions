@@ -72,6 +72,10 @@ jobs:
           touch "$SITE_DIR/.nojekyll"
           if [ -n "$CUSTOM_DOMAIN" ]; then echo "$CUSTOM_DOMAIN" > "$SITE_DIR/CNAME"; fi
           cp "$SITE_DIR/index.html" "$SITE_DIR/404.html"
+          for route in about privacy-policy intake login dashboard clients units occupancies intake-submissions users settings auth/otp-verify auth/set-password auth/reset-password auth/totp-setup; do
+            mkdir -p "$SITE_DIR/$route"
+            cp "$SITE_DIR/index.html" "$SITE_DIR/$route/index.html"
+          done
 
       - name: Debug output
         run: |
