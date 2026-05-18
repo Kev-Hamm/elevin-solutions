@@ -1,43 +1,44 @@
 {
-  "name": "blue-oasis-blank",
-  "version": "0.0.0",
+  "name": "elevinsolutions-web",
+  "version": "1.0.0",
+  "description": "Elevin Solutions housing management web frontend",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
-  },
-  "prettier": {
-    "printWidth": 100,
-    "singleQuote": true,
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
+    "build:elevin": "ng build --base-href /elevin/ --output-path dist/elevin --output-hashing=all && cp dist/elevin/index.html dist/elevin/404.html && for route in about privacy-policy intake login dashboard clients units occupancies intake-submissions users settings auth/otp-verify auth/set-password auth/reset-password auth/totp-setup; do mkdir -p dist/elevin/$route; cp dist/elevin/index.html dist/elevin/$route/index.html; done",
+    "build:gh": "ng build --base-href /DirtyCLAW/",
+    "postbuild": "cp dist/elevinsolutions-web/index.html dist/elevinsolutions-web/404.html",
+    "deploy:elevin": "bash ./scripts/deploy-elevin.sh",
+    "test": "ng test",
+    "lint": "ng lint",
+    "dev": "ng serve --open"
   },
   "private": true,
-  "packageManager": "npm@11.7.0",
   "dependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/compiler": "^21.0.0",
-    "@angular/core": "^21.0.0",
-    "@angular/forms": "^21.0.0",
-    "@angular/platform-browser": "^21.0.0",
-    "@angular/router": "^21.0.0",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "@angular/animations": "^18.0.0",
+    "@angular/common": "^18.0.0",
+    "@angular/compiler": "^18.0.0",
+    "@angular/core": "^18.0.0",
+    "@angular/forms": "^18.0.0",
+    "@angular/platform-browser": "^18.0.0",
+    "@angular/platform-browser-dynamic": "^18.0.0",
+    "@angular/router": "^18.0.0",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.6.0",
+    "zone.js": "^0.14.0"
   },
   "devDependencies": {
-    "@angular/build": "^21.0.4",
-    "@angular/cli": "^21.0.4",
-    "@angular/compiler-cli": "^21.0.0",
-    "jsdom": "^27.1.0",
-    "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "@angular-devkit/build-angular": "^18.0.0",
+    "@angular/cli": "^18.0.0",
+    "@angular/compiler-cli": "^18.0.0",
+    "@types/jasmine": "~5.1.0",
+    "jasmine-core": "~5.1.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.4.0"
   }
 }
